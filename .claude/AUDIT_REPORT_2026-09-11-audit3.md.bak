@@ -1,0 +1,55 @@
+# AUDIT WORKSPACE — 2026-09-11 (audit #3, post-corrections)
+
+> Remplace `.claude/AUDIT_REPORT_2026-09-06.md.bak` (archivé, pas supprimé — obsolète : décrivait
+> un état sans dépôt git, avec 6 agents et des chemins `docs/ROADMAP.md` cassés, tous corrigés
+> depuis). Cet audit couvre les corrections appliquées le 2026-09-11 suite à l'audit #2 du même
+> jour (rapport présenté en chat, pas écrit sur disque à l'époque).
+
+## SCORE GLOBAL : ~77/100 (était 55/100 le 2026-09-06)
+
+## FICHIERS ANALYSÉS
+| Fichier | Tokens | Densité | Actionabilité | Problèmes |
+|---------|--------|---------|---------------|-----------|
+| CLAUDE.md | 2379 (était 2912) | 7/10 | 8/10 | Toujours au-dessus du seuil critique générique (800 tok) de cette skill — mais le contenu restant est RÈGLES ABSOLUES/Limites/Workflow, jugé non compressible sans perdre des garde-fous réels. Accepté comme compromis, pas un oubli. |
+| .claude/context/errors.md | 534 (était 1190) | 8/10 | 8/10 | Toujours au-dessus du seuil générique (300 tok) — chaque ligne garde une commande/URL/cause précise ; compression supplémentaire sacrifierait l'actionabilité. |
+| .claude/AUDIT_REPORT_2026-09-06.md.bak | 1403 | — | — | Archivé (renommé, pas supprimé) — décrivait un état obsolète. |
+| .claude/agents/*.md (6 sur 8) | 577–916 | 8/10 | 8/10 | Au-dessus du seuil générique (500 tok) par fichier, mais ces fichiers ne sont chargés qu'à l'invocation de l'agent concerné, pas à chaque session — sévérité réelle bien plus faible que pour CLAUDE.md. Aucune action prise (cohérent avec la recommandation initiale : "pas urgent, seulement si retouché"). |
+| .claude/skills/meta/start.md | nouveau (~60) | 8/10 | 9/10 | Créé — adapté au projet (pointe `EXECUTIVE_SUMMARY.md`, pas `progress.md`) plutôt que copié du template générique de la skill. |
+| .claude/context/progress.md | ABSENT (délibéré) | — | — | ℹ Non créé — rôle rempli par `EXECUTIVE_SUMMARY.md` + mémoire cross-session, documenté dans `CLAUDE.md` §Persistance de session pour qu'un futur audit ne le re-signale pas comme un manque. |
+| skills/x402-data-apis/ (racine, pas `.claude/skills/`) | — | — | — | Découvert non documenté dans `CLAUDE.md`/`ROADMAP.md` (l'était déjà dans `README.md`) — c'est un skill agent de *distribution* (installable par des tiers), pas un skill Claude Code pour cette session ; pointeur ajouté dans `CLAUDE.md` (arbre STRUCTURE) et `ROADMAP.md` Phase 2. |
+
+## ⛔ PROBLÈMES CRITIQUES
+- [x] `.claude/AUDIT_REPORT.md` décrivait un état obsolète (2026-09-06) → archivé en `.bak`, régénéré (ce fichier)
+- [x] `CLAUDE.md` chargeait 2912 tokens à chaque session, gonflé par du contenu narratif (Gouvernance, grille de compétences, paragraphe skills) → déplacé vers `ARCHITECTURE.md` (entrées 2026-08-30 et 2026-09-07), `CLAUDE.md` ne garde qu'un pointeur court. Reste au-dessus du seuil générique de cette skill mais le contenu restant est légitime (voir table ci-dessus) — pas d'action supplémentaire recommandée.
+
+## ⚠ PROBLÈMES IMPORTANTS
+- [x] `.claude/context/errors.md` en paragraphes longs au lieu de "1 ligne/erreur" → condensé (1190 → 534 tokens), chaque entrée garde la commande/cause/fix précise
+- [ ] 6 agents sur 8 dépassent le seuil générique par fichier (500 tok) → pas d'action, séverité réelle faible (chargés seulement à l'invocation), à condenser seulement si l'un d'eux est retouché pour une autre raison
+
+## ℹ REDONDANCES DÉTECTÉES
+- Aucune redondance réelle confirmée cette fois — l'hypothèse initiale (doublon `errors.md`/`ARCHITECTURE.md` sur l'incident `ops-dashboard`) ne s'est pas vérifiée à la relecture : les deux fichiers couvrent des incidents distincts, pas de fusion nécessaire.
+- Chevauchement CLAUDE.md/`PLAN-PROJET.md` §2 sur les limites Free Tier — jugé volontaire (résumé toujours chargé vs détail à la demande), pas une vraie redondance nuisible.
+
+## FICHIERS MANQUANTS RECOMMANDÉS
+- [x] `.claude/skills/meta/start.md` — créé
+- [ ] `.claude/skills/meta/end.md` — non créé, `CLAUDE.md` §Fin de session sert déjà cet usage de façon informelle ; à formaliser seulement si ça devient insuffisant en pratique
+
+## PLAN DE CORRECTION — statut
+1. ~~Alléger `CLAUDE.md`~~ ✅ fait (2912 → 2379 tok, -18%)
+2. ~~Condenser `errors.md`~~ ✅ fait (1190 → 534 tok, -55%)
+3. ~~Archiver l'audit obsolète~~ ✅ fait
+4. ~~Documenter `skills/x402-data-apis` dans `ROADMAP.md`/`CLAUDE.md`~~ ✅ fait
+5. ~~Créer `skills/meta/start.md`~~ ✅ fait
+6. Condenser les agents volumineux — reporté (pas d'urgence, cf. ci-dessus)
+
+## ÉCONOMIE TOKEN ESTIMÉE
+| | Avant (ce jour) | Après | Gain |
+|---|-------|-------|------|
+| CLAUDE.md (chargé chaque session, + import PROFILE.md ~242 tok) | 3154 | 2621 | 17% |
+| errors.md (lu en début de workflow) | 1190 | 534 | 55% |
+| Densité moyenne (fichiers ci-dessus) | ~7/10 | ~7.7/10 | — |
+
+## CONFIRMATION REQUISE
+Aucune — ce rapport documente des corrections déjà appliquées sur confirmation explicite du
+Fondateur en chat le 2026-09-11 ("On applique tout ça, partie par partie, dans ton ordre de
+recommandations"), pas un plan en attente.

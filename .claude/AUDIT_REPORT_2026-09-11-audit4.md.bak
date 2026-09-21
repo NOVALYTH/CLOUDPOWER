@@ -1,0 +1,41 @@
+# AUDIT WORKSPACE — 2026-09-11 (audit #4)
+
+> Remplace `.claude/AUDIT_REPORT_2026-09-11-audit3.md.bak` (archivé, pas supprimé). Aucun fichier
+> `.claude/` n'a été modifié entre l'audit #3 (commit `daada2f`) et ce passage — les commits
+> intermédiaires (`914bcef`, `6849a7c`) touchent seulement des dépendances et `EXECUTIVE_SUMMARY.md`.
+
+## SCORE GLOBAL : ~77/100 (inchangé depuis audit #3)
+
+## FICHIERS ANALYSÉS
+| Fichier | Tokens | Densité | Actionabilité | Problèmes |
+|---------|--------|---------|---------------|-----------|
+| CLAUDE.md | 2379 | 7/10 | 8/10 | Au-dessus du seuil générique (800 tok) mais contenu jugé non compressible (règles absolues, limites, workflow) — statu quo confirmé audit #3. |
+| .claude/context/errors.md | 534 | 8/10 | 8/10 | Idem — condensé à l'audit #3, pas de regain de verbosité détecté. |
+| .claude/agents/*.md (6/8) | 577–916 | 8/10 | 8/10 | Toujours au-dessus du seuil générique (500 tok), sévérité réelle faible (chargés à l'invocation seulement). Aucune retouche depuis audit #3. |
+| .claude/settings.json | — | — | — | Plugin `cloudflare@cloudflare` (scope projet) toujours déclaré, ~1031 tok always-on déjà évalués négligeables — pas de nouveauté. |
+| .claude/skills/meta/end.md | ABSENT | — | — | Toujours non créé — `CLAUDE.md` §Fin de session sert cet usage informellement ; pas de signal qu'il devienne insuffisant en pratique. |
+
+## ⛔ PROBLÈMES CRITIQUES
+Aucun.
+
+## ⚠ PROBLÈMES IMPORTANTS
+- [ ] 6 agents sur 8 dépassent le seuil générique par fichier (500 tok) — reporté depuis audit #3, à condenser seulement si l'un d'eux est retouché pour une autre raison.
+- [ ] `.claude/skills/meta/end.md` absent — reporté depuis audit #3, formaliser seulement si le rituel de fin de session en chat devient insuffisant.
+
+## ℹ REDONDANCES DÉTECTÉES
+Aucune nouvelle depuis audit #3 (les deux chevauchements déjà examinés — `errors.md`/`ARCHITECTURE.md`, `CLAUDE.md`/`PLAN-PROJET.md` §2 — restent jugés volontaires, pas de fusion nécessaire).
+
+## FICHIERS MANQUANTS RECOMMANDÉS
+- [ ] `.claude/skills/meta/end.md` (reporté, cf. ci-dessus)
+
+## PLAN DE CORRECTION
+Aucune action nouvelle à prioriser — le workspace n'a pas dérivé depuis l'audit #3. Les deux points
+⚠ restent des tickets ouverts de basse priorité, pas des régressions.
+
+## ÉCONOMIE TOKEN ESTIMÉE
+Aucun changement de tokens/session depuis audit #3 (12408 tok mesurés par `scan-workspace.sh`,
+identique au total attendu post-audit #3).
+
+## CONFIRMATION REQUISE
+Aucune — aucune correction proposée cette fois. Ce rapport confirme l'absence de dérive plutôt
+qu'un nouveau plan d'action.

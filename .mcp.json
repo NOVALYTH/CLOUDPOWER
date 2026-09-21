@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "coinbase-payments": {
+      "command": "npx",
+      "args": ["-y", "@coinbase/payments-mcp"]
+    }
+  }
+}

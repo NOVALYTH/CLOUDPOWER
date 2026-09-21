@@ -1,0 +1,33 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/products/p1-markdown-x402"
+    schedule:
+      interval: "weekly"
+    groups:
+      x402:
+        patterns:
+          - "@x402/*"
+
+  - package-ecosystem: "npm"
+    directory: "/products/p2-domain-parser"
+    schedule:
+      interval: "weekly"
+    groups:
+      x402:
+        patterns:
+          - "@x402/*"
+
+  - package-ecosystem: "npm"
+    directory: "/products/p3-domain-intelligence"
+    schedule:
+      interval: "weekly"
+    groups:
+      x402:
+        patterns:
+          - "@x402/*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

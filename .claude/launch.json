@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ops-dashboard",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["wrangler", "dev", "--config", "products/ops-dashboard/wrangler.jsonc"],
+      "port": 8787
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+# AUDIT WORKSPACE — 2026-09-06
+
+## SCORE GLOBAL : 55/100
+
+## FICHIERS ANALYSÉS
+| Fichier | Tokens | Densité | Actionabilité | Problèmes |
+|---------|--------|---------|---------------|-----------|
+| CLAUDE.md (+ import PROFILE.md) | 1638 + 242 = **1880** | 7/10 | 8/10 | Dépasse largement le seuil critique (800 tok) ; référence des sections `§1`, `§2`, `§6`, `§9` qui n'existent plus dans le fichier actuel |
+| .claude/agents/architect.md | 288 | 8/10 | 7/10 | Pointe vers `docs/architecture.md` et `docs/PLAN-PROJET.md` — dossier `docs/` inexistant |
+| .claude/agents/cloudflare-ops.md | 315 | 8/10 | 8/10 | Pointe vers `docs/ROADMAP.md` — chemin faux (le fichier réel est `ROADMAP.md` à la racine) |
+| .claude/agents/monetization-strategist.md | 312 | 8/10 | 7/10 | Pointe 2× vers `docs/ROADMAP.md` — chemin faux |
+| .claude/agents/security-auditor.md | 270 | 8/10 | 8/10 | Aucun pointeur cassé, mais dépend d'un `.gitignore`/dépôt git qui n'existe pas (voir ci-dessous) |
+| .claude/agents/testing.md | 222 | 8/10 | 8/10 | Pointe vers `docs/ROADMAP.md` (faux) et `CLAUDE.md §9` (section inexistante) |
+| .claude/agents/x402-payments.md | 352 | 8/10 | 8/10 | Référence `CLAUDE.md §2 et §6` — sections inexistantes |
+| .claude/commands/update-summary.md | 194 | 7/10 | 7/10 | Référence `docs/ROADMAP.md` et `docs/architecture.md` (faux chemins) |
+| .claude/context/progress.md | ABSENT | — | — | ⛔ CRITIQUE |
+| .claude/context/errors.md | ABSENT | — | — | ⛔ CRITIQUE |
+| .claude/skills/ | 0 skill (juste `.gitkeep`) | — | — | ℹ vide, cohérent avec "un produit à la fois" tant qu'aucun module n'est déployé |
+
+## ⛔ PROBLÈMES CRITIQUES
+- [ ] `context/progress.md` absent → aucune mémoire de session persistante entre les runs Claude Code
+- [ ] `context/errors.md` absent → les erreurs résolues seront re-découvertes à chaque session
+- [ ] CLAUDE.md charge ~1880 tokens à chaque démarrage de session (fichier + `@../_metahub/PROFILE.md`) → dépasse le seuil critique de 800 tok, gaspille du budget de contexte sur des sections rarement utiles en début de session (catalogue de modèles AI, URLs de référence)
+- [ ] **6 agents sur 6** référencent une structure obsolète : `docs/architecture.md`, `docs/ROADMAP.md`, `docs/PLAN-PROJET.md` (dossier `docs/` inexistant — les vrais fichiers `ROADMAP.md` et `PLAN-PROJET.md` sont à la racine), et des sections numérotées `CLAUDE.md §1/§2/§6/§9` qui n'existent plus dans le CLAUDE.md actuel → conséquence directe du remplacement du plan initial le 06/09 (confirmé par `EXECUTIVE_SUMMARY.md`) : les agents datent de l'ancien plan et n'ont pas été mis à jour avec le nouveau CLAUDE.md. Un agent invoqué ira chercher un fichier qui n'existe pas.
+
+## ⚠ PROBLÈMES IMPORTANTS
+- [ ] `skills/meta/start.md` et `skills/meta/end.md` absents → pas de protocole standard d'ouverture/fermeture de session (impact tokens estimé : faible en soi, mais explique l'absence de `progress.md`/`errors.md` à jour)
+- [ ] Aucun dépôt git initialisé (`Is a git repository: false`) et aucun `.gitignore` à la racine → l'agent `security-auditor` est censé vérifier que `.dev.vars` est listé dans `.gitignore` et grep le diff avant commit, deux vérifications qui ne peuvent pas fonctionner tant qu'il n'y a pas de dépôt. Risque concret dès qu'un secret sera généré localement.
+- [ ] 6 agents scaffoldés pour un projet qui n'a encore aucun produit déployé (philosophie CLAUDE.md : "un produit à la fois") — CLAUDE.md lui-même note déjà que leur utilité est "à réévaluer", ce que cet audit confirme : au moins 4 sont actuellement inutilisables tels quels à cause des chemins cassés.
+
+## ℹ REDONDANCES DÉTECTÉES
+- Aucune redondance de convention entre CLAUDE.md et un skill (normal, 0 skill actif).
+- Chevauchement de rôle partiel (~30%, sous le seuil "ambigu" à 40%) entre `monetization-strategist` (décide d'activer un module) et `cloudflare-ops` (vérifie les quotas avant activation) — pas bloquant, juste à garder en tête si un 3e agent de "gate" est ajouté plus tard.
+
+## FICHIERS MANQUANTS RECOMMANDÉS
+- [ ] .claude/context/progress.md
+- [ ] .claude/context/errors.md
+- [ ] .claude/skills/meta/start.md
+- [ ] .claude/skills/meta/end.md
+
+## PLAN DE CORRECTION (ordre prioritaire)
+1. Créer `context/progress.md` et `context/errors.md` (fichiers critiques manquants)
+2. Corriger les chemins cassés dans les 6 agents + la commande `update-summary` (`docs/ROADMAP.md` → `ROADMAP.md`, `docs/architecture.md` → à créer ou retirer la référence, `CLAUDE.md §X` → remplacer par le nom de section réel)
+3. Alléger CLAUDE.md (1880 → cible ~500-700 tokens) : extraire le catalogue de modèles Workers AI et les URLs de référence vers un fichier `references/` chargé à la demande, garder uniquement les règles absolues et le workflow dans le fichier principal
+4. Décider du sort des 6 agents : les garder tels quels une fois les chemins corrigés, ou les réduire à ceux réellement utiles pour le premier produit (cohérent avec la philosophie "un produit à la fois")
+5. Créer `skills/meta/start.md` + `end.md` pour formaliser l'ouverture/fermeture de session
+
+## ÉCONOMIE TOKEN ESTIMÉE
+| | Avant | Après | Gain |
+|---|-------|-------|------|
+| Tokens/session (chargement auto) | 1880 | ~700 | 63% |
+| Fichiers chargés au démarrage | 2 (CLAUDE.md + PROFILE.md) | 2 (CLAUDE.md allégé + PROFILE.md) | — |
+| Densité moyenne | 7.75/10 | ~9/10 | — |
+
+## CONFIRMATION REQUISE
+Pour appliquer ces corrections, répondre `oui` ou `go`.

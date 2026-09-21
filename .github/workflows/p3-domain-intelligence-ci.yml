@@ -1,0 +1,31 @@
+name: CI (p3-domain-intelligence)
+
+on:
+  push:
+    branches: ["**"]
+    paths: ["products/p3-domain-intelligence/**"]
+  pull_request:
+    paths: ["products/p3-domain-intelligence/**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: products/p3-domain-intelligence
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # --legacy-peer-deps works around a real npm 10.x arborist crash
+      # ("Cannot read properties of null (reading 'edgesOut')") seen while
+      # setting up this project's peer dependency graph — not a project bug,
+      # kept here for reproducibility. See commit history for details.
+      - run: npm ci --legacy-peer-deps
+
+      - run: npm run typecheck
+
+      - run: npm test

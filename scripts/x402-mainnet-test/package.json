@@ -1,0 +1,17 @@
+{
+  "name": "x402-mainnet-test",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Client x402 minimal pour valider par un vrai paiement mainnet le paywall de p1-p4. Outil de test, pas un produit.",
+  "scripts": {
+    "generate-wallet": "node generate-wallet.mjs",
+    "test-payment": "node test-payment.mjs"
+  },
+  "dependencies": {
+    "@x402/core": "^2.25.0",
+    "@x402/evm": "^2.25.0",
+    "@x402/fetch": "^2.25.0",
+    "viem": "^2.48.11"
+  }
+}
