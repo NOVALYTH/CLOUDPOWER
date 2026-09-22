@@ -16,7 +16,7 @@ jobs:
     # and variables > Actions): CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID.
     # This session cannot create GitHub secrets itself — see docs/architecture-discovery.md.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
